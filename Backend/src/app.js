@@ -25,4 +25,6 @@ app.use("/api/v1/profile", profileRoutes);
 import medicineRoutes from "./routes/medicine.routes.js";
 app.use("/api/v1/medicine", medicineRoutes);
 
+
+
 export default app;

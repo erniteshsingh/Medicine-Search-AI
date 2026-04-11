@@ -9,12 +9,11 @@ export const analyzeText = async (req, res) => {
     const { text } = req.body;
     const result = await analyzeMedicineText(text);
 
-    // Database mein save karna
     const medicine = await Medicine.create({
       user: req.user._id,
       query: text,
       response: result,
-      type: "text", // Aap model mein 'type' field add kar sakte hain differentiate karne ke liye
+      type: "text",
     });
 
     res.status(200).json({ success: true, data: medicine });
@@ -40,17 +39,16 @@ export const analyzeImage = async (req, res) => {
 
     const result = await analyzeMedicineImage(imageBase64, req.file.mimetype);
 
-
     const lines = result.split("\n");
     const detectedName = lines[0].trim() || "Unknown Medicine";
-    const fullReport = result; 
+    const fullReport = result;
 
     const medicine = await Medicine.create({
       user: req.user._id,
-      query: detectedName, 
+      query: detectedName,
       response: fullReport,
       type: "image",
-      metadata: { originalFile: req.file.originalname }, 
+      metadata: { originalFile: req.file.originalname },
     });
 
     res.status(200).json({
@@ -60,5 +58,36 @@ export const analyzeImage = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getSearchHistory = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const history = await Medicine.find({ user: req.user._id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select("-__v");
+
+    const totalRecords = await Medicine.countDocuments({ user: req.user._id });
+
+    res.status(200).json({
+      success: true,
+      count: history.length,
+      totalPages: Math.ceil(totalRecords / limit),
+      currentPage: page,
+      totalRecords,
+      data: history,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "History fetch karne mein problem hui.",
+      error: error.message,
+    });
   }
 };
