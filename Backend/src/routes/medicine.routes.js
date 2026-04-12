@@ -12,7 +12,7 @@ import {
   getSearchHistory,
 } from "../controllers/medicine.controller.js";
 
-router.post("/text", authMiddleware, validateMedicineText, analyzeText);
+router.post("/analyze-text", authMiddleware, validateMedicineText, analyzeText);
 
 router.post(
   "/analyze-image",

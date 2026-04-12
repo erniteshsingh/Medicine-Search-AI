@@ -48,14 +48,11 @@ const SHARED_CONFIG = {
   topK: 1,
 };
 
-
 export const analyzeMedicineText = async (text) => {
-  const startTime = Date.now();
   try {
     const query = text?.trim();
-    if (!query || query.length < 3) return "ERROR: Query too short.";
+    if (!query || query.length < 3) throw new Error("Query too short.");
 
-   
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: `Analyze the medicine: "${query}". ${COMMON_FORMATTING}`,
@@ -65,8 +62,9 @@ export const analyzeMedicineText = async (text) => {
     let result = response.text || "NO_DATA_RETURNED";
     return result.replace(/[*#`]/g, "").trim();
   } catch (error) {
-    console.error("[AI_ERROR] Text Search:", error.message);
-    return "Service temporarily unavailable.";
+    // Yahan hum res.status nahi use karenge, sirf error ko aage bhejenge
+    console.error("[AI_ERROR] Service Level:", error.message);
+    throw error; // Yeh sabse important hai!
   }
 };
 
@@ -103,7 +101,7 @@ export const analyzeMedicineImage = async (
     });
 
     let result = response.text || "NO_DATA_RETURNED";
-  
+
     return result.replace(/[*#`]/g, "").trim();
   } catch (error) {
     throw new Error("Vision Intelligence failed. Check if image is valid.");

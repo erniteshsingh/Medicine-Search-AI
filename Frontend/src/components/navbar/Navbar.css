@@ -1,0 +1,137 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.navbar {
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: #ffffff;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1300px;
+  padding: 0 30px;
+}
+
+
+.nav-logo {
+  color: #1a2a6c;
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon-svg {
+  color: #3498db;
+  transition: 0.4s ease;
+}
+
+.text-blue { color: #3498db; }
+
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-links {
+  color: #475569;
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.active-link {
+  color: #3498db !important;
+  font-weight: 700;
+}
+
+
+.nav-btn-login {
+  padding: 10px 25px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+}
+
+.nav-btn-login:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.profile-icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+  color: #64748b;
+  transition: 0.3s;
+}
+
+.profile-icon-svg {
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-icon-svg:hover {
+  color: #3498db;
+  transform: scale(1.1);
+}
+
+
+.nav-icon {
+  display: none;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 960px) {
+  .nav-icon { display: block; }
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 80px;
+    left: -100%;
+    opacity: 0;
+    transition: 0.4s;
+    background: #fff;
+    padding: 20px 0;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+  }
+
+  .nav-menu.active {
+    left: 0;
+    opacity: 1;
+  }
+
+  .nav-btn-login { width: 80%; margin: 10px 0; }
+  
+  .profile-icon-link { margin: 15px 0; }
+}

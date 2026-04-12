@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.response-page {
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+}
+
+.response-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  text-align: center;
+}
+
+.error-msg {
+  color: #b91c1c;
+  background: #fef2f2;
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 1px solid #fee2e2;
+  margin: 20px 0;
+  font-weight: 500;
+  max-width: 450px;
+  line-height: 1.6;
+}
+
+
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 25px;
+}
+
+.medicine-hero {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  margin-bottom: 30px;
+}
+
+.medicine-icon-box {
+  background: linear-gradient(135deg, #3498db, #2ecc71);
+  color: white;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.pill-badge {
+  background: #e0f2fe; color: #0369a1;
+  font-size: 0.75rem; font-weight: 800;
+  padding: 6px 14px; border-radius: 100px;
+  text-transform: uppercase;
+}
+
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.info-card {
+  background: white;
+  padding: 28px;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.02);
+  transition: transform 0.2s;
+}
+
+.info-card:hover { transform: translateY(-4px); }
+.info-card.wide { grid-column: span 2; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 12px;
+}
+
+
+.check-list { list-style: none; padding: 0; }
+.check-list li { position: relative; padding-left: 28px; margin-bottom: 12px; }
+.check-list li::before { content: '✓'; position: absolute; left: 0; color: #2ecc71; font-weight: 800; }
+
+.side-effect-tag {
+  background: #fff1f2; color: #be123c;
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 0.85rem; font-weight: 600;
+  display: inline-block; margin: 4px;
+}
+
+
+.warning-card { grid-column: span 2; background: #fffaf5; border: 1px solid #ffedd5; }
+.warnings-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.warning-box strong { color: #9a3412; display: block; margin-bottom: 5px; }
+
+
+.animate-spin { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.fade-up { animation: fadeUp 0.6s ease-out forwards; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.icon-blue { color: #3498db; }
+.icon-green { color: #2ecc71; }
+.icon-orange { color: #f59e0b; }
+.icon-yellow { color: #eab308; }
+.icon-red { color: #ef4444; }
+
+@media (max-width: 768px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .info-card.wide, .warning-card { grid-column: span 1; }
+  .warnings-content { grid-template-columns: 1fr; }
+}

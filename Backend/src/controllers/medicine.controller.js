@@ -7,18 +7,41 @@ import Medicine from "../models/medicine.model.js";
 export const analyzeText = async (req, res) => {
   try {
     const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ success: false, message: "Text is required" });
+    }
+
+    // Service call
     const result = await analyzeMedicineText(text);
 
-    const medicine = await Medicine.create({
+    await Medicine.create({
       user: req.user._id,
       query: text,
       response: result,
       type: "text",
     });
 
-    res.status(200).json({ success: true, data: medicine });
+    res.status(200).json({ success: true, data: result });
+
   } catch (error) {
-    console.error("AI Text Error:", error);
+    console.error("AI Text Error Detail:", error.message);
+
+    // Precise check for Rate Limit (429)
+    const isQuotaError = 
+      error.status === 429 || 
+      error.response?.status === 429 || 
+      error.message?.includes("429") || 
+      error.message?.toLowerCase().includes("quota");
+
+    if (isQuotaError) {
+      // Yahan res.status kaam karega
+      return res.status(429).json({
+        success: false,
+        message: "AI Limit Reached. Our AI brain needs a 30-second break!",
+      });
+    }
+
+    // General Error
     res.status(500).json({
       success: false,
       message: "AI processing failed",
