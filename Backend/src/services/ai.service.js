@@ -1,4 +1,4 @@
-import ai from "../config/ai.config.js";
+import genAI from "../config/ai.config.js";
 
 const COMMON_FORMATTING = `
 [STRICT FORMATTING]
@@ -53,18 +53,23 @@ export const analyzeMedicineText = async (text) => {
     const query = text?.trim();
     if (!query || query.length < 3) throw new Error("Query too short.");
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `Analyze the medicine: "${query}". ${COMMON_FORMATTING}`,
-      config: SHARED_CONFIG,
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-pro",
+      generationConfig: SHARED_CONFIG,
     });
 
-    let result = response.text || "NO_DATA_RETURNED";
-    return result.replace(/[*#`]/g, "").trim();
+    const prompt = `Analyze the medicine: "${query}". Provide details like uses, side effects, and precautions. ${COMMON_FORMATTING}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const plainText = response.text();
+
+    if (!plainText) throw new Error("NO_DATA_RETURNED");
+
+    return plainText.replace(/[*#`]/g, "").trim();
   } catch (error) {
-    // Yahan hum res.status nahi use karenge, sirf error ko aage bhejenge
-    console.error("[AI_ERROR] Service Level:", error.message);
-    throw error; // Yeh sabse important hai!
+    console.error("AI Text Service Error:", error.message);
+    throw error;
   }
 };
 
@@ -73,37 +78,38 @@ export const analyzeMedicineImage = async (
   mimeType = "image/jpeg",
 ) => {
   try {
-    if (!imageBase64) return "ERROR: No image data received.";
+    if (!imageBase64) throw new Error("No image data received.");
 
+    // Base64 string se header remove karna agar मौजूद hai
     const cleanBase64 = imageBase64.includes(",")
       ? imageBase64.split(",")[1]
       : imageBase64;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: `Analyze this medicine image and provide a report. ${COMMON_FORMATTING}`,
-            },
-            {
-              inlineData: {
-                mimeType: mimeType,
-                data: cleanBase64,
-              },
-            },
-          ],
-        },
-      ],
-      config: SHARED_CONFIG,
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      generationConfig: SHARED_CONFIG,
     });
 
-    let result = response.text || "NO_DATA_RETURNED";
+    const prompt = `Analyze this medicine image and provide a report. ${COMMON_FORMATTING}`;
 
-    return result.replace(/[*#`]/g, "").trim();
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          data: cleanBase64,
+          mimeType: mimeType,
+        },
+      },
+    ]);
+
+    const response = await result.response;
+    const plainText = response.text();
+
+    if (!plainText) throw new Error("NO_DATA_RETURNED");
+
+    return plainText.replace(/[*#`]/g, "").trim();
   } catch (error) {
+    console.error("AI Vision Service Error:", error.message);
     throw new Error("Vision Intelligence failed. Check if image is valid.");
   }
 };

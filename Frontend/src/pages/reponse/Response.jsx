@@ -20,12 +20,10 @@ const Response = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
- 
   const { searchQuery, imageFile } = location.state || {};
 
   useEffect(() => {
     const fetchAnalysis = async () => {
-      
       if (!searchQuery && !imageFile) {
         setLoading(false);
         setError("No data found to analyze. Please try searching again.");
@@ -37,7 +35,6 @@ const Response = () => {
         const config = { headers: { Authorization: `Bearer ${token}` } };
         let response;
 
-       
         if (imageFile) {
           const formData = new FormData();
           formData.append("image", imageFile);
@@ -57,16 +54,15 @@ const Response = () => {
             { text: searchQuery },
             config,
           );
+          console.log("response from backend:", response);
         }
 
-      
         if (response.data?.success) {
           setData(response.data.data);
         } else {
           setError(response.data?.message || "Analysis failed.");
         }
       } catch (err) {
-       
         const errorMessage = err.response?.data?.message;
 
         if (err.response?.status === 429) {
@@ -86,7 +82,6 @@ const Response = () => {
     fetchAnalysis();
   }, [searchQuery, imageFile]);
 
-  
   if (loading) {
     return (
       <div className="loading-state">
@@ -97,7 +92,6 @@ const Response = () => {
     );
   }
 
- 
   if (error || !data) {
     return (
       <div className="error-state">
@@ -134,7 +128,6 @@ const Response = () => {
         </header>
 
         <div className="info-grid">
-         
           <div className="info-card wide">
             <div className="card-header">
               <FileText size={20} className="icon-blue" />
@@ -143,7 +136,6 @@ const Response = () => {
             <p>{data.description || "No description provided."}</p>
           </div>
 
-         
           <div className="info-card">
             <div className="card-header">
               <Activity size={20} className="icon-green" />
@@ -158,7 +150,6 @@ const Response = () => {
             </ul>
           </div>
 
-         
           <div className="info-card">
             <div className="card-header">
               <AlertCircle size={20} className="icon-orange" />
@@ -177,7 +168,6 @@ const Response = () => {
             </div>
           </div>
 
-       
           <div className="info-card">
             <div className="card-header">
               <Clock size={20} className="icon-yellow" />
@@ -186,7 +176,6 @@ const Response = () => {
             <p>{data.dosage || "Consult your physician for exact dosage."}</p>
           </div>
 
-          
           <div className="info-card warning-card">
             <div className="card-header">
               <ShieldAlert size={20} className="icon-red" />

@@ -110,7 +110,7 @@ const Home = () => {
           {selectedImage && (
             <div className="file-preview-container">
               <p className="file-preview-text">
-                📸 Image: <strong>{selectedImage.name}</strong>
+                 Image: <strong>{selectedImage.name}</strong>
               </p>
               <button
                 className="remove-file"

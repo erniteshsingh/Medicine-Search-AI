@@ -8,10 +8,11 @@ export const analyzeText = async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) {
-      return res.status(400).json({ success: false, message: "Text is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Text is required" });
     }
 
-    // Service call
     const result = await analyzeMedicineText(text);
 
     await Medicine.create({
@@ -22,26 +23,22 @@ export const analyzeText = async (req, res) => {
     });
 
     res.status(200).json({ success: true, data: result });
-
   } catch (error) {
     console.error("AI Text Error Detail:", error.message);
 
-    // Precise check for Rate Limit (429)
-    const isQuotaError = 
-      error.status === 429 || 
-      error.response?.status === 429 || 
-      error.message?.includes("429") || 
+    const isQuotaError =
+      error.status === 429 ||
+      error.response?.status === 429 ||
+      error.message?.includes("429") ||
       error.message?.toLowerCase().includes("quota");
 
     if (isQuotaError) {
-      // Yahan res.status kaam karega
       return res.status(429).json({
         success: false,
         message: "AI Limit Reached. Our AI brain needs a 30-second break!",
       });
     }
 
-    // General Error
     res.status(500).json({
       success: false,
       message: "AI processing failed",
@@ -88,28 +85,80 @@ export const getSearchHistory = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
     const skip = (page - 1) * limit;
 
-    const history = await Medicine.find({ user: req.user._id })
+    let query = { user: req.user._id };
+
+    if (search) {
+      query.$or = [
+        { query: { $regex: search, $options: "i" } },
+        { medicineName: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const history = await Medicine.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select("-__v");
+      .lean();
 
-    const totalRecords = await Medicine.countDocuments({ user: req.user._id });
+    const totalRecords = await Medicine.countDocuments(query);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      count: history.length,
-      totalPages: Math.ceil(totalRecords / limit),
-      currentPage: page,
-      totalRecords,
       data: history,
+      pagination: {
+        totalRecords, // Ye frontend pe total count dikhayega
+        totalPages: Math.ceil(totalRecords / limit),
+        currentPage: page,
+      },
     });
   } catch (error) {
+    console.error("Backend History Error:", error.message);
     res.status(500).json({
       success: false,
       message: "History fetch karne mein problem hui.",
+      error: error.message,
+    });
+  }
+};
+
+export const deleteHistory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log("Deleting ID:", id);
+    console.log("User from Token:", req.user?._id);
+
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not authenticated" });
+    }
+
+    const deletedRecord = await Medicine.findOneAndDelete({
+      _id: id,
+      user: req.user._id,
+    });
+
+    if (!deletedRecord) {
+      return res.status(404).json({
+        success: false,
+        message: "Record nahi mila ya aap authorized nahi hain.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Medicine history deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Delete History Error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Server side par error hai.",
       error: error.message,
     });
   }

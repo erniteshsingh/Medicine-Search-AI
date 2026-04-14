@@ -6,6 +6,7 @@ import { validateMedicineText } from "../validators/medicine.validator.js";
 
 import { upload } from "../middlewares/multer.js";
 
+import { deleteHistory } from "../controllers/medicine.controller.js";
 import {
   analyzeText,
   analyzeImage,
@@ -22,5 +23,6 @@ router.post(
 );
 
 router.get("/history", authMiddleware, getSearchHistory);
+router.delete("/deletehistory/:id", authMiddleware,deleteHistory);
 
 export default router;
