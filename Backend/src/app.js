@@ -8,7 +8,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "https://medicine-search-ai-ehtq.vercel.app",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   }),
