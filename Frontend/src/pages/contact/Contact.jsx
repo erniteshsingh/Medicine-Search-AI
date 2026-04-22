@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MessageSquare, Phone, User, Send, CheckCircle } from "lucide-react";
 import axios from "axios";
 import "./Contact.css";
+import API_URL from "../../apiConfig";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,22 +18,33 @@ const Contact = () => {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setLoading(true);
+    setStatus({ type: "", msg: "" });
+
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/support/contact",
+        `${API_URL}/api/v1/support/contact`,
         formData,
       );
+
       if (response.data.success) {
         setStatus({
           type: "success",
           msg: "Message sent! We will contact you soon.",
         });
         setFormData({ name: "", phone: "", issue: "" });
+
+        // Message ko 4 second baad hide karne ke liye
+        setTimeout(() => {
+          setStatus({ type: "", msg: "" });
+        }, 4000);
       }
     } catch (err) {
-      setStatus({ type: "error", msg: "Something went wrong. Try again." });
+      setStatus({
+        type: "error",
+        msg: err.response?.data?.message || "Something went wrong. Try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -50,7 +62,7 @@ const Contact = () => {
           {status.msg && (
             <div className={`status-alert ${status.type}`}>
               {status.type === "success" && <CheckCircle size={18} />}
-              {status.msg}
+              <span>{status.msg}</span>
             </div>
           )}
 
@@ -77,6 +89,7 @@ const Contact = () => {
               <input
                 type="tel"
                 placeholder="Enter 10-digit number"
+                pattern="[0-9]{10}"
                 value={formData.phone}
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })

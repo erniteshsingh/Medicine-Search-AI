@@ -2,10 +2,11 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import API_URL from "../apiConfig";
 
 const AuthContext = createContext();
 
-const API_BASE_URL = "http://localhost:5000/api/v1";
+
 
 axios.defaults.withCredentials = true;
 
@@ -25,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (formData) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/auth/login`, formData);
+      const res = await axios.post(`${API_URLL}/auth/login`, formData);
       const { user } = res.data;
 
       localStorage.setItem("user", JSON.stringify(user));
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (formData) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/auth/signup`, formData);
+      const res = await axios.post(`${API_URL}/auth/signup`, formData);
       const { user } = res.data;
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/auth/logout`);
+      await axios.post(`${API_URL}/auth/logout`);
       toast.info("Logged out successfully. See you soon!");
       navigate("/");
     } catch (err) {
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const profile = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/users/me`);
+      const res = await axios.get(`${API_URL}/users/me`);
       setUserProfile(res.data);
     } catch (err) {
       console.error(err);

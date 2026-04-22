@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
+import API_URL from "../../apiConfig";
 import axios from "axios";
 import {
   ArrowLeft,
@@ -98,7 +100,7 @@ const Response = () => {
           const formData = new FormData();
           formData.append("image", imageFile);
           response = await axios.post(
-            "http://localhost:5000/api/v1/medicine/analyze-image",
+              `${API_URL}/api/v1/medicine/analyze-image`,
             formData,
             {
               headers: {
@@ -109,7 +111,7 @@ const Response = () => {
           );
         } else {
           response = await axios.post(
-            "http://localhost:5000/api/v1/medicine/analyze-text",
+            `${API_URL}/api/v1/medicine/analyze-text`,
             { text: searchQuery },
             config,
           );

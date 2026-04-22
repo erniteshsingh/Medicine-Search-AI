@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import API_URL from "../../apiConfig";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
@@ -29,7 +30,7 @@ const History = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:5000/api/v1/medicine/history?page=${page}&limit=10&search=${searchTerm}`,
+        `${API_URL}/api/v1/medicine/history?page=${page}&limit=10&search=${searchTerm}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
