@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   Camera,
@@ -9,24 +9,41 @@ import {
   Image as ImageIcon,
   X,
 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 import "./Home.css";
+import Login from "../../pages/Login/Login";
+import Signup from "../../pages/Signup/Signup";
 
 const Home = () => {
   const [query, setQuery] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
+
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     setIsVisible(true);
   }, []);
 
+  const handleActionClick = () => {
+    if (!isAuthenticated) {
+      setShowSignup(true);
+      return false;
+    }
+    return true;
+  };
+
   const handleSearch = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    if (!handleActionClick()) return;
     if (!query.trim() && !selectedImage) return;
 
-    
     navigate("/result", {
       state: {
         searchQuery: query,
@@ -45,6 +62,9 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      <div className="bg-blur-circle-1"></div>
+      <div className="bg-blur-circle-2"></div>
+
       <section className={`hero-section ${isVisible ? "fade-up" : ""}`}>
         <div className="hero-content">
           <div className="ai-badge">
@@ -73,6 +93,7 @@ const Home = () => {
                     : "Type medicine name..."
                 }
                 value={query}
+                onFocus={handleActionClick}
                 onChange={(e) => {
                   setQuery(e.target.value);
                   if (e.target.value) setSelectedImage(null);
@@ -90,7 +111,11 @@ const Home = () => {
                 <button
                   type="button"
                   className={`camera-btn-premium ${selectedImage ? "active-upload" : ""}`}
-                  onClick={() => fileInputRef.current.click()}
+                  onClick={() => {
+                    if (handleActionClick()) {
+                      fileInputRef.current.click();
+                    }
+                  }}
                 >
                   {selectedImage ? (
                     <ImageIcon size={22} color="#2ecc71" />
@@ -110,7 +135,7 @@ const Home = () => {
           {selectedImage && (
             <div className="file-preview-container">
               <p className="file-preview-text">
-                 Image: <strong>{selectedImage.name}</strong>
+                Image: <strong>{selectedImage.name}</strong>
               </p>
               <button
                 className="remove-file"
@@ -131,6 +156,23 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <Login
+        isOpen={showLogin}
+        onClose={() => setShowLogin(false)}
+        switchToSignup={() => {
+          setShowLogin(false);
+          setShowSignup(true);
+        }}
+      />
+      <Signup
+        isOpen={showSignup}
+        onClose={() => setShowSignup(false)}
+        switchToLogin={() => {
+          setShowSignup(false);
+          setShowLogin(true);
+        }}
+      />
     </div>
   );
 };

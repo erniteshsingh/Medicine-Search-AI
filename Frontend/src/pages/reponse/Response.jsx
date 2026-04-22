@@ -22,6 +22,65 @@ const Response = () => {
 
   const { searchQuery, imageFile } = location.state || {};
 
+ 
+  const parseAIResponse = (rawText) => {
+    const sections = {
+      name: "Unknown Medicine",
+      category: "General Pharmacology",
+      description: "",
+      uses: [],
+      sideEffects: [],
+      dosage: "",
+      warnings: { alcohol: "", pregnancy: "" },
+    };
+
+   
+    const brandMatch = rawText.match(/-- Brand Name: (.*)/);
+    const saltMatch = rawText.match(/-- Generic Salt: (.*)/);
+    if (brandMatch) sections.name = brandMatch[1].trim();
+    if (saltMatch) sections.category = saltMatch[1].trim();
+
+    
+    const mechMatch = rawText.match(/-- Mechanism of Action: (.*)/);
+    if (mechMatch) sections.description = mechMatch[1].trim();
+
+    const usesMatch = rawText.match(
+      /I\. THERAPEUTIC INDICATIONS \(USES\)([\s\S]*?)II\./,
+    );
+    if (usesMatch) {
+      sections.uses = usesMatch[1]
+        .split("--")
+        .filter(
+          (line) =>
+            line.trim() &&
+            !line.includes("Primary:") &&
+            !line.includes("Secondary:"),
+        )
+        .map((l) => l.trim());
+     
+      const primary = usesMatch[1].match(/-- Primary: (.*)/);
+      if (primary) sections.uses.unshift(primary[1].trim());
+    }
+
+    const sideMatch = rawText.match(/-- Common: (.*)/);
+    if (sideMatch)
+      sections.sideEffects = sideMatch[1].split(",").map((e) => e.trim());
+
+   
+    const doseMatch = rawText.match(
+      /III\. DOSAGE & ADMINISTRATION([\s\S]*?)IV\./,
+    );
+    if (doseMatch) sections.dosage = doseMatch[1].replace(/--/g, "").trim();
+
+   
+    const alcoholMatch = rawText.match(/-- Alcohol: (.*)/);
+    const pregMatch = rawText.match(/-- Pregnancy: (.*)/);
+    if (alcoholMatch) sections.warnings.alcohol = alcoholMatch[1].trim();
+    if (pregMatch) sections.warnings.pregnancy = pregMatch[1].trim();
+
+    return sections;
+  };
+
   useEffect(() => {
     const fetchAnalysis = async () => {
       if (!searchQuery && !imageFile) {
@@ -54,26 +113,23 @@ const Response = () => {
             { text: searchQuery },
             config,
           );
-          console.log("response from backend:", response);
         }
 
         if (response.data?.success) {
-          setData(response.data.data);
+         
+          const rawString =
+            typeof response.data.data === "string"
+              ? response.data.data
+              : response.data.data.response; 
+
+          const structuredData = parseAIResponse(rawString);
+          setData(structuredData);
         } else {
           setError(response.data?.message || "Analysis failed.");
         }
       } catch (err) {
         const errorMessage = err.response?.data?.message;
-
-        if (err.response?.status === 429) {
-          setError(
-            errorMessage || "AI Limit Reached. Please try again in 30 seconds!",
-          );
-        } else {
-          setError(
-            errorMessage || "Server connection failed. Please try again later.",
-          );
-        }
+        setError(errorMessage || "Server connection failed.");
       } finally {
         setLoading(false);
       }
@@ -97,11 +153,9 @@ const Response = () => {
       <div className="error-state">
         <AlertCircle size={60} color="#e74c3c" />
         <h2>Analysis Failed</h2>
-        <p className="error-msg">
-          {error || "No response received from the server."}
-        </p>
+        <p className="error-msg">{error}</p>
         <button className="back-btn-error" onClick={() => navigate("/")}>
-          Go Back to Search
+          Go Back
         </button>
       </div>
     );
@@ -120,10 +174,8 @@ const Response = () => {
           </div>
           <div className="medicine-meta">
             <span className="pill-badge">AI Analysis Result</span>
-            <h1>{data.name || "Unknown Medicine"}</h1>
-            <p className="category-text">
-              {data.category || "General Pharmacology"}
-            </p>
+            <h1>{data.name}</h1>
+            <p className="category-text">{data.category}</p>
           </div>
         </header>
 
@@ -131,9 +183,9 @@ const Response = () => {
           <div className="info-card wide">
             <div className="card-header">
               <FileText size={20} className="icon-blue" />
-              <h3>About this Medicine</h3>
+              <h3>Mechanism of Action</h3>
             </div>
-            <p>{data.description || "No description provided."}</p>
+            <p>{data.description || "Description not available."}</p>
           </div>
 
           <div className="info-card">
@@ -142,10 +194,10 @@ const Response = () => {
               <h3>Therapeutic Uses</h3>
             </div>
             <ul className="check-list">
-              {data.uses && data.uses.length > 0 ? (
+              {data.uses.length > 0 ? (
                 data.uses.map((use, i) => <li key={i}>{use}</li>)
               ) : (
-                <li>Information not available</li>
+                <li>Refer to prescription</li>
               )}
             </ul>
           </div>
@@ -153,27 +205,23 @@ const Response = () => {
           <div className="info-card">
             <div className="card-header">
               <AlertCircle size={20} className="icon-orange" />
-              <h3>Potential Side Effects</h3>
+              <h3>Common Side Effects</h3>
             </div>
             <div className="tags-container">
-              {data.sideEffects && data.sideEffects.length > 0 ? (
-                data.sideEffects.map((effect, i) => (
-                  <span key={i} className="side-effect-tag">
-                    {effect}
-                  </span>
-                ))
-              ) : (
-                <span className="side-effect-tag">None reported</span>
-              )}
+              {data.sideEffects.map((effect, i) => (
+                <span key={i} className="side-effect-tag">
+                  {effect}
+                </span>
+              ))}
             </div>
           </div>
 
           <div className="info-card">
             <div className="card-header">
               <Clock size={20} className="icon-yellow" />
-              <h3>General Dosage</h3>
+              <h3>Usage Guide</h3>
             </div>
-            <p>{data.dosage || "Consult your physician for exact dosage."}</p>
+            <p style={{ whiteSpace: "pre-line" }}>{data.dosage}</p>
           </div>
 
           <div className="info-card warning-card">
@@ -184,11 +232,11 @@ const Response = () => {
             <div className="warnings-content">
               <div className="warning-box">
                 <strong>Alcohol:</strong>
-                <p>{data.warnings?.alcohol || "Not recommended"}</p>
+                <p>{data.warnings.alcohol}</p>
               </div>
               <div className="warning-box">
                 <strong>Pregnancy:</strong>
-                <p>{data.warnings?.pregnancy || "Consult doctor before use"}</p>
+                <p>{data.warnings.pregnancy}</p>
               </div>
             </div>
           </div>
@@ -196,8 +244,8 @@ const Response = () => {
 
         <footer className="response-footer">
           <p>
-            MedInsight AI: For informational purposes only.{" "}
-            <strong>Always consult a medical professional.</strong>
+            MedInsight AI: For informational purposes only. Always consult a
+            doctor.
           </p>
         </footer>
       </div>

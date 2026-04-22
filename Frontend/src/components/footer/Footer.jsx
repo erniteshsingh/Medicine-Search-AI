@@ -4,11 +4,14 @@ import { FaGithub, FaInstagram, FaSquareXTwitter } from "react-icons/fa6";
 import { IoLogoLinkedin } from "react-icons/io5";
 import { GiPill } from "react-icons/gi";
 import { MdEmail } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 import "./Footer.css";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+
+  const navigate = useNavigate();
 
   return (
     <footer className="footer">
@@ -28,10 +31,18 @@ const Footer = () => {
             <a href="https://twitter.com" target="_blank" rel="noreferrer">
               <FaSquareXTwitter />
             </a>
-            <a href="https://github.com" target="_blank" rel="noreferrer">
+            <a
+              href="https://github.com/erniteshsingh"
+              target="_blank"
+              rel="noreferrer"
+            >
               <FaGithub />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer">
+            <a
+              href="https://www.linkedin.com/in/erniteshsingh"
+              target="_blank"
+              rel="noreferrer"
+            >
               <IoLogoLinkedin />
             </a>
             <a href="https://instagram.com" target="_blank" rel="noreferrer">
@@ -59,10 +70,10 @@ const Footer = () => {
           <h4>Support</h4>
           <ul>
             <li>
-              <Link to="/privacy">Privacy Policy</Link>
+              <Link to="/privacypolicy">Privacy Policy</Link>
             </li>
             <li>
-              <Link to="/terms">Terms of Service</Link>
+              <Link to="/termsofservice">Terms of Service</Link>
             </li>
             <li>
               <Link to="/contact">Contact Us</Link>
@@ -73,7 +84,7 @@ const Footer = () => {
         <div className="footer-contact">
           <h4>Get in Touch</h4>
           <p>
-            <MdEmail size={18} /> support@medinsight.ai
+            <MdEmail size={18} /> er.niteshkrsingh@gmail.com
           </p>
           <div className="disclaimer-box">
             <strong>Disclaimer:</strong> AI insights are for information only.

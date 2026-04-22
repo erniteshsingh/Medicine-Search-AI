@@ -1,0 +1,134 @@
+.terms-wrapper {
+    background-color: #ffffff;
+    min-height: 100vh;
+    padding: 60px 20px;
+    color: #1e293b;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  .terms-container {
+    max-width: 850px;
+    margin: 0 auto;
+  }
+  
+  .terms-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  
+  .terms-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    color: #6366f1;
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .terms-header h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 12px;
+    color: #0f172a;
+  }
+  
+  .terms-header p {
+    color: #64748b;
+    font-size: 1rem;
+  }
+  
+  .terms-section {
+    margin-bottom: 35px;
+    padding: 35px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+  }
+  
+  .terms-section:hover {
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  }
+  
+  .terms-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .terms-title h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+  
+  .terms-section p {
+    line-height: 1.8;
+    color: #475569;
+    font-size: 1rem;
+    margin: 0;
+  }
+  
+  .terms-section strong {
+    color: #0f172a;
+    font-weight: 600;
+  }
+  
+  .terms-footer {
+    text-align: center;
+    padding: 50px 0;
+    border-top: 1px solid #f1f5f9;
+    margin-top: 40px;
+  }
+  
+  .terms-footer p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  
+  @media (max-width: 768px) {
+    .terms-wrapper {
+      padding: 40px 15px;
+    }
+    
+    .terms-header h1 {
+      font-size: 2.2rem;
+    }
+    
+    .terms-section {
+      padding: 25px;
+      border-radius: 16px;
+    }
+  
+    .terms-header {
+      margin-bottom: 40px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .terms-header h1 {
+      font-size: 1.8rem;
+    }
+    
+    .terms-title h2 {
+      font-size: 1.15rem;
+    }
+    
+    .terms-section p {
+      font-size: 0.9rem;
+    }
+  }

@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 
@@ -11,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -24,15 +27,18 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await axios.post(`${API_BASE_URL}/auth/login`, formData);
       const { user } = res.data;
-      console.log(user);
+
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
+
+      toast.success("Welcome back! Login successful.  ");
+
+      navigate("/");
       return { success: true, data: res.data };
     } catch (err) {
-      return {
-        success: false,
-        error: err.response?.data?.message || "Login failed",
-      };
+      const errorMsg = err.response?.data?.message || "Login failed";
+      toast.error(errorMsg);
+      return { success: false, error: errorMsg };
     }
   };
 
@@ -42,20 +48,25 @@ export const AuthProvider = ({ children }) => {
       const { user } = res.data;
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
+
+      toast.success("Account created successfully! ");
+
+      navigate("/");
       return { success: true, data: res.data };
     } catch (err) {
-      return {
-        success: false,
-        error: err.response?.data?.message || "Signup failed",
-      };
+      const errorMsg = err.response?.data?.message || "Signup failed";
+      toast.error(errorMsg);
+      return { success: false, error: errorMsg };
     }
   };
 
   const logoutUser = async () => {
     try {
       await axios.post(`${API_BASE_URL}/auth/logout`);
+      toast.info("Logged out successfully. See you soon!");
+      navigate("/");
     } catch (err) {
-      console.error("Logout failed at server", err);
+      console.error(err);
     } finally {
       localStorage.removeItem("user");
       setUser(null);
@@ -68,7 +79,7 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.get(`${API_BASE_URL}/users/me`);
       setUserProfile(res.data);
     } catch (err) {
-      console.error("Profile fetch failed", err);
+      console.error(err);
     }
   };
 

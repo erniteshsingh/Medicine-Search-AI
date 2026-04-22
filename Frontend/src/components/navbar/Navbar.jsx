@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import { Pill, Menu, X } from "lucide-react";
+import { Pill, Menu, X, Home, History } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Navbar.css";
-
 import Login from "../../pages/Login/Login";
 import Signup from "../../pages/Signup/Signup";
 
@@ -12,39 +11,31 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-
   const { isAuthenticated } = useAuth();
 
   const closeMobileMenu = () => setIsOpen(false);
-
-  const openLogin = () => {
-    setShowSignup(false);
-    setShowLogin(true);
-    closeMobileMenu();
-  };
-
-  const openSignup = () => {
-    setShowLogin(false);
-    setShowSignup(true);
-    closeMobileMenu();
-  };
 
   return (
     <>
       <nav className="navbar">
         <div className="nav-container">
           <Link to="/" className="nav-logo" onClick={closeMobileMenu}>
-            <Pill className="logo-icon-svg" size={28} />
+            <Pill className="logo-icon-svg" size={24} />
             <span className="logo-text">
               MedInsight<span className="text-blue">AI</span>
             </span>
           </Link>
 
-          <div className="nav-icon" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
+          <div className="nav-toggle" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <X size={26} /> : <Menu size={26} />}
           </div>
 
-          <ul className={isOpen ? "nav-menu active" : "nav-menu"}>
+          <div
+            className={`nav-overlay ${isOpen ? "active" : ""}`}
+            onClick={closeMobileMenu}
+          ></div>
+
+          <ul className={`nav-menu ${isOpen ? "active" : ""}`}>
             <li className="nav-item">
               <NavLink
                 to="/"
@@ -53,6 +44,7 @@ const Navbar = () => {
                 }
                 onClick={closeMobileMenu}
               >
+                <Home size={18} className="mobile-icon" />
                 Home
               </NavLink>
             </li>
@@ -64,6 +56,7 @@ const Navbar = () => {
                 }
                 onClick={closeMobileMenu}
               >
+                <History size={18} className="mobile-icon" />
                 History
               </NavLink>
             </li>
@@ -72,17 +65,25 @@ const Navbar = () => {
               <li className="nav-item">
                 <NavLink
                   to="/profile"
-                  className="profile-icon-link"
+                  className={({ isActive }) =>
+                    "nav-links profile-nav-link" +
+                    (isActive ? " active-link" : "")
+                  }
                   onClick={closeMobileMenu}
-                  title="View Profile"
                 >
-                  <CgProfile size={32} className="profile-icon-svg" />
+                  <CgProfile size={22} className="profile-logo-icon" />
                 </NavLink>
               </li>
             ) : (
               <li className="nav-item">
-                <button className="nav-btn-login" onClick={openLogin}>
-                  Login
+                <button
+                  className="btn-login-premium"
+                  onClick={() => {
+                    setShowLogin(true);
+                    closeMobileMenu();
+                  }}
+                >
+                  Sign In
                 </button>
               </li>
             )}
@@ -93,12 +94,18 @@ const Navbar = () => {
       <Login
         isOpen={showLogin}
         onClose={() => setShowLogin(false)}
-        switchToSignup={openSignup}
+        switchToSignup={() => {
+          setShowLogin(false);
+          setShowSignup(true);
+        }}
       />
       <Signup
         isOpen={showSignup}
         onClose={() => setShowSignup(false)}
-        switchToLogin={openLogin}
+        switchToLogin={() => {
+          setShowSignup(false);
+          setShowLogin(true);
+        }}
       />
     </>
   );

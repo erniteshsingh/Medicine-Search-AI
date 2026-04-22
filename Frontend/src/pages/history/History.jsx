@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Trash2,
@@ -21,6 +22,7 @@ const History = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const navigate = useNavigate();
 
   const fetchHistory = useCallback(async () => {
     try {
@@ -55,15 +57,17 @@ const History = () => {
       const token = localStorage.getItem("token");
       await axios.delete(
         `http://localhost:5000/api/v1/medicine/deletehistory/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setHistory((prev) => prev.filter((item) => item._id !== id));
       setTotalRecords((prev) => prev - 1);
     } catch (err) {
       alert("Failed to delete record.");
     }
+  };
+
+  const handleView = (medicineName) => {
+    navigate("/", { state: { autoSearch: medicineName } });
   };
 
   return (
@@ -138,7 +142,13 @@ const History = () => {
                       </div>
                     </div>
                     <div className="action-buttons">
-                      <button className="btn-view" title="View details">
+                      <button
+                        className="btn-view"
+                        title="View details"
+                        onClick={() =>
+                          handleView(item.medicineName || item.query)
+                        }
+                      >
                         <Eye size={18} />
                       </button>
                       <button

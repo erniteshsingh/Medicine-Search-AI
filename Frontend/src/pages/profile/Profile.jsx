@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { User, Mail, LogOut, Shield, Activity } from "lucide-react";
 import "./Profile.css";
 
 const Profile = () => {
   const { user, logoutUser } = useAuth();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (!user) {
     return (

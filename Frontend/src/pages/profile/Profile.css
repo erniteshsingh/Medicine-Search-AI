@@ -5,6 +5,12 @@
   flex-direction: column;
   align-items: center;
   padding: 40px 20px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .profile-card {
@@ -61,6 +67,10 @@
   border-bottom: 1px solid #f1f5f9;
 }
 
+.info-item:last-child {
+  border-bottom: none;
+}
+
 .info-icon {
   background: #f0f9ff;
   color: #3498db;
@@ -83,6 +93,7 @@
 .info-text p {
   color: #334155;
   font-weight: 600;
+  margin: 0;
 }
 
 .profile-actions {
@@ -142,6 +153,11 @@
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
 }
 
 .stat-card h3 {
@@ -153,4 +169,5 @@
 .stat-card p {
   color: #64748b;
   font-size: 0.85rem;
+  margin: 0;
 }

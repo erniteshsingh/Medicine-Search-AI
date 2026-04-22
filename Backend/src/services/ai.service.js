@@ -1,3 +1,4 @@
+
 import genAI from "../config/ai.config.js";
 
 const COMMON_FORMATTING = `
@@ -54,7 +55,7 @@ export const analyzeMedicineText = async (text) => {
     if (!query || query.length < 3) throw new Error("Query too short.");
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-pro",
+      model: "gemini-2.5-flash",
       generationConfig: SHARED_CONFIG,
     });
 
@@ -80,13 +81,13 @@ export const analyzeMedicineImage = async (
   try {
     if (!imageBase64) throw new Error("No image data received.");
 
-    // Base64 string se header remove karna agar मौजूद hai
     const cleanBase64 = imageBase64.includes(",")
       ? imageBase64.split(",")[1]
       : imageBase64;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash-lite",
+
       generationConfig: SHARED_CONFIG,
     });
 

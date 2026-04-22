@@ -1,21 +1,23 @@
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --nav-height: 70px;
+  --primary-blue: #3b82f6;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --bg-white: #ffffff;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar {
-  height: 80px;
+  height: var(--nav-height);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.1rem;
   position: sticky;
   top: 0;
-  z-index: 999;
-  background: #ffffff;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .nav-container {
@@ -23,115 +25,172 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 1300px;
-  padding: 0 30px;
+  max-width: 1200px;
+  padding: 0 24px;
+  position: relative;
 }
 
-
 .nav-logo {
-  color: #1a2a6c;
   text-decoration: none;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   gap: 10px;
+  color: var(--text-main);
+  letter-spacing: -0.8px;
 }
 
 .logo-icon-svg {
-  color: #3498db;
-  transition: 0.4s ease;
+  color: var(--primary-blue);
 }
 
-.text-blue { color: #3498db; }
-
+.text-blue {
+  color: var(--primary-blue);
+}
 
 .nav-menu {
   display: flex;
   list-style: none;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 }
 
 .nav-links {
-  color: #475569;
-  padding: 0.6rem 1.2rem;
+  color: var(--text-muted);
+  padding: 10px 18px;
   text-decoration: none;
-  font-weight: 500;
-  transition: 0.3s;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+}
+
+.mobile-icon {
+  display: none;
+}
+
+.profile-logo-icon {
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.active-link .profile-logo-icon {
+  color: var(--primary-blue);
+}
+
+.nav-links:hover {
+  color: var(--text-main);
+  background: #f8fafc;
+}
+
+.nav-links:hover .profile-logo-icon {
+  color: var(--text-main);
 }
 
 .active-link {
-  color: #3498db !important;
-  font-weight: 700;
+  color: var(--primary-blue) !important;
+  background: #eff6ff;
 }
 
+.profile-text {
+  margin-left: 8px;
+}
 
-.nav-btn-login {
-  padding: 10px 25px;
-  background-color: #3498db;
+.btn-login-premium {
+  padding: 10px 24px;
+  background: var(--text-main);
   color: white;
   border: none;
-  border-radius: 10px;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+  transition: var(--transition);
+  margin-left: 10px;
 }
 
-.nav-btn-login:hover {
-  background-color: #2980b9;
+.btn-login-premium:hover {
+  background: #000;
   transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-.profile-icon-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 15px;
-  color: #64748b;
-  transition: 0.3s;
-}
-
-.profile-icon-svg {
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.profile-icon-svg:hover {
-  color: #3498db;
-  transform: scale(1.1);
-}
-
-
-.nav-icon {
+.nav-toggle {
   display: none;
+  color: var(--text-main);
   cursor: pointer;
 }
 
-@media screen and (max-width: 960px) {
-  .nav-icon { display: block; }
+.nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: transparent;
+  visibility: hidden;
+  z-index: 1500;
+}
+
+@media screen and (max-width: 850px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-overlay.active {
+    visibility: visible;
+  }
 
   .nav-menu {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
     position: absolute;
-    top: 80px;
-    left: -100%;
+    top: calc(var(--nav-height) - 5px);
+    right: 24px;
+    width: 200px;
+    background: #ffffff;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: 16px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    border: 1px solid #f1f5f9;
     opacity: 0;
-    transition: 0.4s;
-    background: #fff;
-    padding: 20px 0;
-    box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: var(--transition);
+    z-index: 2000;
+    align-items: flex-start;
   }
 
   .nav-menu.active {
-    left: 0;
     opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
 
-  .nav-btn-login { width: 80%; margin: 10px 0; }
+  .nav-item {
+    width: 100%;
+  }
+
+  .nav-links {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
+
+  .mobile-icon, .profile-logo-icon {
+    display: block;
+    margin-right: 12px;
+  }
   
-  .profile-icon-link { margin: 15px 0; }
+  .profile-text {
+    margin-left: 0;
+  }
+
+  .btn-login-premium {
+    width: 100%;
+    margin: 8px 0 0 0;
+    padding: 12px;
+  }
 }
