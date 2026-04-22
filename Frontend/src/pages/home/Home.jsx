@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import "./Home.css";
-import Login from "../../pages/Login/Login";
-import Signup from "../../pages/Signup/Signup";
+import Login from "../../pages/login/Login";
+import Signup from "../../pages/signup/Signup";
 
 const Home = () => {
   const [query, setQuery] = useState("");
