@@ -5,7 +5,7 @@ import Profile from "../pages/profile/Profile";
 import Home from "../pages/home/Home";
 import Response from "../pages/reponse/Response";
 import History from "../pages/history/History";
-import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
+import PrivacyPolicy from "../pages/privacypolicy/PrivacyPolicy";
 import TermsOfService from "../pages/termservice/TermsOfService";
 import Contact from "../pages/contact/Contact";
 const Wakbas= () => {

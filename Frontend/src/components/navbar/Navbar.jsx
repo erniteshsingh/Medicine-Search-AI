@@ -4,8 +4,8 @@ import { Pill, Menu, X, Home, History } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Navbar.css";
-import Login from "../../pages/Login/Login";
-import Signup from "../../pages/Signup/Signup";
+import Login from "../../pages/login/Login";
+import Signup from "../../pages/signup/Signup";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
