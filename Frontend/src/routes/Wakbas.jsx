@@ -8,7 +8,7 @@ import History from "../pages/history/History";
 import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
 import TermsOfService from "../pages/termservice/TermsOfService";
 import Contact from "../pages/contact/Contact";
-const Approutes = () => {
+const Wakbas= () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -24,4 +24,4 @@ const Approutes = () => {
   );
 };
 
-export default Approutes;
+export default Wakbas;

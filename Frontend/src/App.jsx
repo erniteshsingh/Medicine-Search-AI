@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "./components/navbar/Navbar.jsx";
 import Footer from "./components/footer/Footer.jsx";
-import Approutes from "./routes/Approutes.jsx";
+import Wakbas from "./routes/Wakbas.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,7 +17,7 @@ const App = () => {
       <Navbar />
 
       <main style={{ flex: 1 }}>
-        <Approutes />
+        <Wakbas />
       </main>
 
       <Footer />
