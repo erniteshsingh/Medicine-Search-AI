@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (formData) => {
     try {
-      const res = await axios.post(`${API_URLL}/auth/login`, formData);
+      const res = await axios.post(`${API_URL}/api/v1/auth/login`, formData);
       const { user } = res.data;
 
       localStorage.setItem("user", JSON.stringify(user));
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (formData) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/signup`, formData);
+      const res = await axios.post(`${API_URL}/api/v1/auth/signup`, formData);
       const { user } = res.data;
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const profile = async () => {
     try {
-      const res = await axios.get(`${API_URL}/users/me`);
+      const res = await axios.get(`${API_URL}/api/v1/profile/me`);
       setUserProfile(res.data);
     } catch (err) {
       console.error(err);
