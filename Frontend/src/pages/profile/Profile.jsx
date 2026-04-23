@@ -18,12 +18,12 @@ const Profile = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  // ✅ Fix: Jab user login ho ya page load ho tab data set karega
-  useEffect(() => {
-    if (user && !isEditing) {
-      setFormData({ name: user.name || "", email: user.email || "" });
+  const handleEditToggle = () => {
+    if (!isEditing) {
+      setFormData({ name: user?.name || "", email: user?.email || "" });
     }
-  }, [user, isEditing]);
+    setIsEditing(!isEditing);
+  };
 
   const handleLogout = async () => {
     try {
@@ -131,7 +131,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={() => setIsEditing(false)}
+                  onClick={handleEditToggle}
                 >
                   <X size={18} /> Cancel
                 </button>
@@ -141,7 +141,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="edit-btn"
-                  onClick={() => setIsEditing(true)}
+                  onClick={handleEditToggle}
                 >
                   Edit Profile
                 </button>
