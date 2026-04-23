@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get("/me", authMiddleware, getProfile);
 
-router.put("/update", authMiddleware, updateProfile);
+router.patch("/update", authMiddleware, updateProfile);
 
 router.put("/change-password", authMiddleware, changePassword);
 
