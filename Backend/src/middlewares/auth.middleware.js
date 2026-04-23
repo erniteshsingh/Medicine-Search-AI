@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/auth.model.js";
 
 export const authMiddleware = async (req, res, next) => {
+  console.log("Ready to give permission!");
   try {
     const token = req.cookies.token;
 

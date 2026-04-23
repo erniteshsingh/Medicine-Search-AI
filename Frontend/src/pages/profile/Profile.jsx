@@ -15,14 +15,15 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      setFormData({ name: user.name || "", email: user.email || "" });
-    }
-  }, [user]);
-
-  useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // ✅ Fix: Jab user login ho ya page load ho tab data set karega
+  useEffect(() => {
+    if (user && !isEditing) {
+      setFormData({ name: user.name || "", email: user.email || "" });
+    }
+  }, [user, isEditing]);
 
   const handleLogout = async () => {
     try {
@@ -86,7 +87,6 @@ const Profile = () => {
                 <input
                   type="text"
                   className="edit-input"
-                  name="name"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
@@ -110,7 +110,6 @@ const Profile = () => {
                 <input
                   type="email"
                   className="edit-input"
-                  name="email"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
@@ -132,11 +131,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={() => {
-                    setIsEditing(false);
-                    // Cancel karne par wapas original data set kar dena
-                    setFormData({ name: user.name, email: user.email });
-                  }}
+                  onClick={() => setIsEditing(false)}
                 >
                   <X size={18} /> Cancel
                 </button>
