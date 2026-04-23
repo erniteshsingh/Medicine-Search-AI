@@ -14,12 +14,11 @@ const Profile = () => {
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [loading, setLoading] = useState(false);
 
-  // Sync formData when user data is available or isEditing is toggled
   useEffect(() => {
     if (user) {
       setFormData({ name: user.name || "", email: user.email || "" });
     }
-  }, [user, isEditing]);
+  }, [user]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -87,6 +86,7 @@ const Profile = () => {
                 <input
                   type="text"
                   className="edit-input"
+                  name="name"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
@@ -110,6 +110,7 @@ const Profile = () => {
                 <input
                   type="email"
                   className="edit-input"
+                  name="email"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
@@ -131,7 +132,11 @@ const Profile = () => {
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={() => setIsEditing(false)}
+                  onClick={() => {
+                    setIsEditing(false);
+                    // Cancel karne par wapas original data set kar dena
+                    setFormData({ name: user.name, email: user.email });
+                  }}
                 >
                   <X size={18} /> Cancel
                 </button>
