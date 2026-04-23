@@ -1,4 +1,3 @@
-
 .profile-container {
   min-height: calc(100vh - 80px);
   background-color: #f8fafc;
@@ -6,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 20px; 
+  padding: 20px;
   animation: fadeIn 0.5s ease-in-out;
 }
 
@@ -15,11 +14,10 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-
 .profile-card {
   background: white;
   width: 100%;
-  max-width: 480px; 
+  max-width: 480px;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   padding: 30px 25px;
@@ -49,7 +47,7 @@
   color: #1e293b;
   font-size: 1.3rem;
   margin: 0;
-  word-wrap: break-word; 
+  word-wrap: break-word;
 }
 
 .profile-status {
@@ -64,6 +62,7 @@
   gap: 15px;
   padding: 16px 0;
   border-bottom: 1px solid #f1f5f9;
+  min-height: 75px; /* Height fix taaki input open hone pe UI hile na */
 }
 
 .info-item:last-of-type {
@@ -73,7 +72,7 @@
 .info-icon {
   color: #3498db;
   background: #f0f9ff;
-  min-width: 42px; 
+  min-width: 42px;
   height: 42px;
   border-radius: 12px;
   display: flex;
@@ -100,8 +99,7 @@
   font-weight: 600;
   margin: 2px 0 0;
   font-size: 0.95rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.4;
 }
 
 .edit-input {
@@ -109,20 +107,20 @@
   border: none;
   border-bottom: 2px solid #3498db;
   outline: none;
-  padding: 2px 0;
+  padding: 0;
   background: transparent;
+  display: block;
 }
-
 
 .profile-actions {
   display: flex;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 25px;
 }
 
 .edit-btn, .save-btn, .logout-btn, .cancel-btn {
-  padding: 12px;
+  padding: 12px 15px;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -149,7 +147,7 @@
 
 .edit-btn:hover { background: #e2e8f0; }
 .logout-btn:hover { background: #e11d48; color: white; }
-
+.save-btn:active, .edit-btn:active { transform: scale(0.98); }
 
 .profile-stats {
   display: grid;
@@ -168,26 +166,10 @@
 }
 
 @media (max-width: 480px) {
-  .profile-container {
-    padding: 15px;
-  }
-  
-  .profile-card {
-    padding: 25px 20px;
-  }
-
-  .profile-avatar {
-    width: 75px;
-    height: 75px;
-    font-size: 1.8rem;
-  }
-
-  .profile-actions {
-    flex-direction: column; 
-  }
-
-  .edit-btn, .save-btn, .logout-btn, .cancel-btn {
-    width: 100%;
-    flex: none;
-  }
+  .profile-container { padding: 15px; }
+  .profile-card { padding: 25px 20px; }
+  .profile-avatar { width: 75px; height: 75px; font-size: 1.8rem; }
+  .profile-actions { flex-direction: column; }
+  .edit-btn, .save-btn, .logout-btn, .cancel-btn { width: 100%; flex: none; }
+  .profile-stats { grid-template-columns: 1fr; } /* Mobile pe stats stack honge toh zyada professional lagega */
 }
