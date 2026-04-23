@@ -19,6 +19,7 @@ export const getProfile = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
+  console.log("Ready to update user profile!");
   try {
     const { name, email } = req.body;
 
@@ -31,7 +32,6 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-
     if (name) user.name = name;
     if (email) user.email = email;
 
@@ -42,7 +42,6 @@ export const updateProfile = async (req, res) => {
       message: "Profile updated successfully",
       user,
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -68,10 +67,7 @@ export const changePassword = async (req, res) => {
     const user = await User.findById(req.user._id);
 
     // compare current password
-    const isMatch = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!isMatch) {
       return res.status(400).json({
@@ -91,7 +87,6 @@ export const changePassword = async (req, res) => {
       success: true,
       message: "Password changed successfully",
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({

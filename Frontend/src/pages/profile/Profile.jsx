@@ -41,7 +41,11 @@ const Profile = () => {
       );
 
       if (response.data.success) {
-        setUser(response.data.user);
+        if (typeof setUser === "function") {
+          setUser(response.data.user);
+        } else {
+          console.error("Critical: setUser is not a function in AuthContext");
+        }
         setIsEditing(false);
       }
     } catch (error) {
