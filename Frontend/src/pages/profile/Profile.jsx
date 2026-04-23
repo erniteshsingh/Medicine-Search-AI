@@ -1,12 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, LogOut, Shield, Activity } from "lucide-react";
+import { User, Mail, LogOut, Shield, Activity, Save, X } from "lucide-react";
+import axios from "axios";
 import "./Profile.css";
+import API_URL from "../../apiConfig";
 
 const Profile = () => {
-  const { user, logoutUser } = useAuth();
+  const { user, logoutUser, setUser } = useAuth();
   const navigate = useNavigate();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -18,6 +27,27 @@ const Profile = () => {
       navigate("/");
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.patch(
+        `${API_URL}/api/v1/profile/update`,
+        formData,
+        { withCredentials: true },
+      );
+
+      if (response.data.success) {
+        setUser(response.data.user);
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,18 +66,30 @@ const Profile = () => {
           <div className="profile-avatar">
             {user.name ? user.name.charAt(0).toUpperCase() : "U"}
           </div>
-          <h2 className="profile-name">{user.name || "User Name"}</h2>
+          <h2 className="profile-name">{user.name}</h2>
           <p className="profile-status">MedInsight Premium Member</p>
         </div>
 
-        <div className="profile-body">
+        <form onSubmit={handleUpdate} className="profile-body">
           <div className="info-item">
             <div className="info-icon">
               <User size={20} />
             </div>
             <div className="info-text">
               <label>Full Name</label>
-              <p>{user.name}</p>
+              {isEditing ? (
+                <input
+                  type="text"
+                  className="edit-input"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  required
+                />
+              ) : (
+                <p>{user.name}</p>
+              )}
             </div>
           </div>
 
@@ -57,7 +99,19 @@ const Profile = () => {
             </div>
             <div className="info-text">
               <label>Email Address</label>
-              <p>{user.email}</p>
+              {isEditing ? (
+                <input
+                  type="email"
+                  className="edit-input"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  required
+                />
+              ) : (
+                <p>{user.email}</p>
+              )}
             </div>
           </div>
 
@@ -70,15 +124,41 @@ const Profile = () => {
               <p>Verified Account</p>
             </div>
           </div>
-        </div>
 
-        <div className="profile-actions">
-          <button className="edit-btn">Edit Profile</button>
-          <button className="logout-btn" onClick={handleLogout}>
-            <LogOut size={18} />
-            Logout
-          </button>
-        </div>
+          <div className="profile-actions">
+            {isEditing ? (
+              <>
+                <button type="submit" className="save-btn" disabled={loading}>
+                  <Save size={18} /> {loading ? "..." : "Save"}
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setIsEditing(false)}
+                >
+                  <X size={18} />
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="edit-btn"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Profile
+                </button>
+                <button
+                  type="button"
+                  className="logout-btn"
+                  onClick={handleLogout}
+                >
+                  <LogOut size={18} />
+                </button>
+              </>
+            )}
+          </div>
+        </form>
       </div>
 
       <div className="profile-stats">
