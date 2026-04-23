@@ -1,31 +1,35 @@
-import React, { useState } from "react"; 
+import React, { useState, useEffect } from "react";
 import { X, Mail, Lock } from "lucide-react";
-import { useAuth } from "../../context/AuthContext"; 
+import { useAuth } from "../../context/AuthContext";
 import googleicon from "../../assets/googleicon.svg";
 import "./Login.css";
 
 const Login = ({ isOpen, onClose, switchToSignup }) => {
-  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
- 
   const { login } = useAuth();
+
+  useEffect(() => {
+    if (!isOpen) {
+      setEmail("");
+      setPassword("");
+      setError("");
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
 
     const result = await login({ email, password });
 
     if (result.success) {
-      onClose(); 
+      onClose();
     } else {
-      setError(result.error); 
+      setError(result.error);
     }
   };
 
@@ -41,7 +45,6 @@ const Login = ({ isOpen, onClose, switchToSignup }) => {
           <p>Login to your MedInsight account</p>
         </div>
 
-        {}
         {error && (
           <p
             className="error-message"
