@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, LogOut, Shield, Activity, Save, X } from "lucide-react";
+import { User, Mail, LogOut, Activity, Shield, Save, X } from "lucide-react";
 import axios from "axios";
 import "./Profile.css";
 import API_URL from "../../apiConfig";
@@ -11,11 +11,15 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-  });
+  const [formData, setFormData] = useState({ name: "", email: "" });
   const [loading, setLoading] = useState(false);
+
+  // Sync formData when user data is available or isEditing is toggled
+  useEffect(() => {
+    if (user) {
+      setFormData({ name: user.name || "", email: user.email || "" });
+    }
+  }, [user, isEditing]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,8 +47,6 @@ const Profile = () => {
       if (response.data.success) {
         if (typeof setUser === "function") {
           setUser(response.data.user);
-        } else {
-          console.error("Critical: setUser is not a function in AuthContext");
         }
         setIsEditing(false);
       }
@@ -71,7 +73,7 @@ const Profile = () => {
             {user.name ? user.name.charAt(0).toUpperCase() : "U"}
           </div>
           <h2 className="profile-name">{user.name}</h2>
-          <p className="profile-status">MedInsight Premium Member</p>
+          <p className="profile-status">MedInsight Member</p>
         </div>
 
         <form onSubmit={handleUpdate} className="profile-body">
@@ -90,6 +92,7 @@ const Profile = () => {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   required
+                  autoFocus
                 />
               ) : (
                 <p>{user.name}</p>
@@ -119,28 +122,18 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="info-item">
-            <div className="info-icon">
-              <Shield size={20} />
-            </div>
-            <div className="info-text">
-              <label>Account Security</label>
-              <p>Verified Account</p>
-            </div>
-          </div>
-
           <div className="profile-actions">
             {isEditing ? (
               <>
                 <button type="submit" className="save-btn" disabled={loading}>
-                  <Save size={18} /> {loading ? "..." : "Save"}
+                  <Save size={18} /> {loading ? "..." : "Save Changes"}
                 </button>
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={() => setIsEditing(false)}
                 >
-                  <X size={18} />
+                  <X size={18} /> Cancel
                 </button>
               </>
             ) : (
@@ -157,7 +150,7 @@ const Profile = () => {
                   className="logout-btn"
                   onClick={handleLogout}
                 >
-                  <LogOut size={18} />
+                  <LogOut size={18} /> Logout
                 </button>
               </>
             )}
