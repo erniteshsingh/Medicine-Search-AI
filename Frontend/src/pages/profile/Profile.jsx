@@ -1,14 +1,25 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { User, Mail, LogOut, Shield, Activity } from "lucide-react";
 import "./Profile.css";
 
 const Profile = () => {
   const { user, logoutUser } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (!user) {
     return (
@@ -63,7 +74,7 @@ const Profile = () => {
 
         <div className="profile-actions">
           <button className="edit-btn">Edit Profile</button>
-          <button className="logout-btn" onClick={logoutUser}>
+          <button className="logout-btn" onClick={handleLogout}>
             <LogOut size={18} />
             Logout
           </button>
