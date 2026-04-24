@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, LogOut, Activity, Shield, Save, X } from "lucide-react";
+import {
+  User,
+  Mail,
+  LogOut,
+  Activity,
+  Shield,
+  Save,
+  X,
+  Lock,
+} from "lucide-react";
 import axios from "axios";
 import "./Profile.css";
 import API_URL from "../../apiConfig";
@@ -11,11 +20,17 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
   });
 
   useEffect(() => {
@@ -35,9 +50,11 @@ const Profile = () => {
     try {
       await logoutUser();
       navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
+  };
+
+  const handleGoHome = () => {
+    navigate("/");
   };
 
   const handleChange = (e) => {
@@ -49,8 +66,20 @@ const Profile = () => {
     }));
   };
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+
+    setPasswordData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
+
     setLoading(true);
 
     try {
@@ -63,14 +92,46 @@ const Profile = () => {
       );
 
       if (response.data.success) {
-        if (typeof setUser === "function") {
-          setUser(response.data.user);
-        }
+        setUser(response.data.user);
+
+        setFormData({
+          name: response.data.user.name || "",
+          email: response.data.user.email || "",
+        });
 
         setIsEditing(false);
       }
     } catch (error) {
-      console.error("Update failed:", error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+
+    if (loading) return;
+
+    setLoading(true);
+
+    try {
+      const response = await axios.patch(
+        `${API_URL}/api/v1/profile/change-password`,
+        passwordData,
+        {
+          withCredentials: true,
+        },
+      );
+
+      if (response.data.success) {
+        setPasswordData({
+          currentPassword: "",
+          newPassword: "",
+        });
+
+        setIsChangingPassword(false);
+      }
+    } catch (error) {
     } finally {
       setLoading(false);
     }
@@ -85,6 +146,15 @@ const Profile = () => {
     setIsEditing(false);
   };
 
+  const handlePasswordCancel = () => {
+    setPasswordData({
+      currentPassword: "",
+      newPassword: "",
+    });
+
+    setIsChangingPassword(false);
+  };
+
   if (!user) {
     return (
       <div className="profile-loading">
@@ -95,6 +165,10 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
+      <button type="button" className="back-home-btn" onClick={handleGoHome}>
+        Back to Home
+      </button>
+
       <div className="profile-card">
         <div className="profile-header">
           <div className="profile-avatar">
@@ -105,16 +179,69 @@ const Profile = () => {
           <p className="profile-status">MedInsight Member</p>
         </div>
 
-        <form onSubmit={handleUpdate} className="profile-body">
-          <div className="info-item">
-            <div className="info-icon">
-              <User size={20} />
+        {!isEditing && !isChangingPassword ? (
+          <>
+            <div className="profile-body">
+              <div className="info-item">
+                <div className="info-icon">
+                  <User size={20} />
+                </div>
+
+                <div className="info-text">
+                  <label>Full Name</label>
+                  <p>{user.name}</p>
+                </div>
+              </div>
+
+              <div className="info-item">
+                <div className="info-icon">
+                  <Mail size={20} />
+                </div>
+
+                <div className="info-text">
+                  <label>Email Address</label>
+                  <p>{user.email}</p>
+                </div>
+              </div>
             </div>
 
-            <div className="info-text">
-              <label>Full Name</label>
+            <div className="profile-actions">
+              <button
+                type="button"
+                className="edit-btn"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit Profile
+              </button>
 
-              {isEditing ? (
+              <button
+                type="button"
+                className="password-btn"
+                onClick={() => setIsChangingPassword(true)}
+              >
+                <Lock size={18} />
+                Change Password
+              </button>
+
+              <button
+                type="button"
+                className="logout-btn"
+                onClick={handleLogout}
+              >
+                <LogOut size={18} />
+                Logout
+              </button>
+            </div>
+          </>
+        ) : isEditing ? (
+          <form onSubmit={handleUpdate} className="profile-body">
+            <div className="info-item">
+              <div className="info-icon">
+                <User size={20} />
+              </div>
+
+              <div className="info-text">
+                <label>Full Name</label>
                 <input
                   type="text"
                   name="name"
@@ -122,23 +249,17 @@ const Profile = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  autoFocus
                 />
-              ) : (
-                <p>{user.name}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="info-item">
-            <div className="info-icon">
-              <Mail size={20} />
+              </div>
             </div>
 
-            <div className="info-text">
-              <label>Email Address</label>
+            <div className="info-item">
+              <div className="info-icon">
+                <Mail size={20} />
+              </div>
 
-              {isEditing ? (
+              <div className="info-text">
+                <label>Email Address</label>
                 <input
                   type="email"
                   name="email"
@@ -147,51 +268,80 @@ const Profile = () => {
                   onChange={handleChange}
                   required
                 />
-              ) : (
-                <p>{user.email}</p>
-              )}
+              </div>
             </div>
-          </div>
 
-          <div className="profile-actions">
-            {isEditing ? (
-              <>
-                <button type="submit" className="save-btn" disabled={loading}>
-                  <Save size={18} />
-                  {loading ? "Saving..." : "Save Changes"}
-                </button>
+            <div className="profile-actions">
+              <button type="submit" className="save-btn" disabled={loading}>
+                <Save size={18} />
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
 
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={handleCancel}
-                >
-                  <X size={18} />
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="edit-btn"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit Profile
-                </button>
+              <button
+                type="button"
+                className="cancel-btn"
+                onClick={handleCancel}
+              >
+                <X size={18} />
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={handleChangePassword} className="profile-body">
+            <div className="info-item">
+              <div className="info-icon">
+                <Lock size={20} />
+              </div>
 
-                <button
-                  type="button"
-                  className="logout-btn"
-                  onClick={handleLogout}
-                >
-                  <LogOut size={18} />
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
-        </form>
+              <div className="info-text">
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  className="edit-input"
+                  value={passwordData.currentPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="info-item">
+              <div className="info-icon">
+                <Lock size={20} />
+              </div>
+
+              <div className="info-text">
+                <label>New Password</label>
+                <input
+                  type="password"
+                  name="newPassword"
+                  className="edit-input"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="profile-actions">
+              <button type="submit" className="save-btn" disabled={loading}>
+                <Save size={18} />
+                {loading ? "Updating..." : "Update Password"}
+              </button>
+
+              <button
+                type="button"
+                className="cancel-btn"
+                onClick={handlePasswordCancel}
+              >
+                <X size={18} />
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
       </div>
 
       <div className="profile-stats">

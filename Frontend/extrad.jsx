@@ -1,3 +1,6 @@
+## AuthContext.jsx
+
+```jsx
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -42,11 +45,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       const errorMsg = err.response?.data?.message || "Login failed";
       toast.error(errorMsg);
-
-      return {
-        success: false,
-        error: errorMsg,
-      };
+      return { success: false, error: errorMsg };
     }
   };
 
@@ -63,11 +62,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       const errorMsg = err.response?.data?.message || "Signup failed";
       toast.error(errorMsg);
-
-      return {
-        success: false,
-        error: errorMsg,
-      };
+      return { success: false, error: errorMsg };
     }
   };
 
@@ -75,6 +70,9 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post(`${API_URL}/api/v1/auth/logoutuser`);
       toast.info("Logged out successfully.");
+      navigate("/");
+    } catch (err) {
+      console.error(err);
     } finally {
       localStorage.removeItem("user");
       setUser(null);
@@ -86,8 +84,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await axios.get(`${API_URL}/api/v1/profile/me`);
       setUserProfile(res.data);
-    } catch {
-      toast.error("Failed to load profile");
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -113,3 +111,5 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   return useContext(AuthContext);
 };
+```
+
