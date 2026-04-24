@@ -11,6 +11,6 @@ router.get("/me", authMiddleware, getProfile);
 
 router.patch("/update", authMiddleware, updateProfile);
 
-router.put("/change-password", authMiddleware, changePassword);
+router.patch("/change-password", authMiddleware, changePassword);
 
 export default router;

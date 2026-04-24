@@ -11,7 +11,7 @@ router.post("/signup", signupValidator, validate, signup);
 
 router.post("/login", login);
 
-router.post("/logout", authMiddleware, logout);
+router.post("/logoutuser", authMiddleware, logout);
 
 
 export default router;
