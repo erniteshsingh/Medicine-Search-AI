@@ -1,7 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+
+
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, LogOut, Activity, Shield, Save, X } from "lucide-react";
+import {
+  User,
+  Mail,
+  LogOut,
+  Activity,
+  Shield,
+  Save,
+  X,
+} from "lucide-react";
 import axios from "axios";
 import "./Profile.css";
 import API_URL from "../../apiConfig";
@@ -13,13 +23,23 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Refs to hold input values directly (Bypasses state-render loop)
-  const nameRef = useRef(null);
-  const emailRef = useRef(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -30,34 +50,51 @@ const Profile = () => {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Collect data from refs
-    const updatedData = {
-      name: nameRef.current.value,
-      email: emailRef.current.value,
-    };
-
     try {
       const response = await axios.patch(
         `${API_URL}/api/v1/profile/update`,
-        updatedData,
-        { withCredentials: true },
+        formData,
+        {
+          withCredentials: true,
+        }
       );
+
+      console.log(response.data);
 
       if (response.data.success) {
         if (typeof setUser === "function") {
           setUser(response.data.user);
         }
+
         setIsEditing(false);
       }
     } catch (error) {
-      console.error("Update failed:", error);
+      console.error("Update failed:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      name: user?.name || "",
+      email: user?.email || "",
+    });
+
+    setIsEditing(false);
   };
 
   if (!user) {
@@ -75,6 +112,7 @@ const Profile = () => {
           <div className="profile-avatar">
             {user.name ? user.name.charAt(0).toUpperCase() : "U"}
           </div>
+
           <h2 className="profile-name">{user.name}</h2>
           <p className="profile-status">MedInsight Member</p>
         </div>
@@ -84,14 +122,17 @@ const Profile = () => {
             <div className="info-icon">
               <User size={20} />
             </div>
+
             <div className="info-text">
               <label>Full Name</label>
+
               {isEditing ? (
                 <input
                   type="text"
+                  name="name"
                   className="edit-input"
-                  ref={nameRef}
-                  defaultValue={user.name}
+                  value={formData.name}
+                  onChange={handleChange}
                   required
                   autoFocus
                 />
@@ -105,14 +146,17 @@ const Profile = () => {
             <div className="info-icon">
               <Mail size={20} />
             </div>
+
             <div className="info-text">
               <label>Email Address</label>
+
               {isEditing ? (
                 <input
                   type="email"
+                  name="email"
                   className="edit-input"
-                  ref={emailRef}
-                  defaultValue={user.email}
+                  value={formData.email}
+                  onChange={handleChange}
                   required
                 />
               ) : (
@@ -124,15 +168,22 @@ const Profile = () => {
           <div className="profile-actions">
             {isEditing ? (
               <>
-                <button type="submit" className="save-btn" disabled={loading}>
-                  <Save size={18} /> {loading ? "..." : "Save Changes"}
+                <button
+                  type="submit"
+                  className="save-btn"
+                  disabled={loading}
+                >
+                  <Save size={18} />
+                  {loading ? "Saving..." : "Save Changes"}
                 </button>
+
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={() => setIsEditing(false)}
+                  onClick={handleCancel}
                 >
-                  <X size={18} /> Cancel
+                  <X size={18} />
+                  Cancel
                 </button>
               </>
             ) : (
@@ -144,12 +195,14 @@ const Profile = () => {
                 >
                   Edit Profile
                 </button>
+
                 <button
                   type="button"
                   className="logout-btn"
                   onClick={handleLogout}
                 >
-                  <LogOut size={18} /> Logout
+                  <LogOut size={18} />
+                  Logout
                 </button>
               </>
             )}
@@ -163,6 +216,7 @@ const Profile = () => {
           <h3>12</h3>
           <p>Scans Done</p>
         </div>
+
         <div className="stat-card">
           <Shield size={24} color="#2ecc71" />
           <h3>Safe</h3>
@@ -174,3 +228,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
