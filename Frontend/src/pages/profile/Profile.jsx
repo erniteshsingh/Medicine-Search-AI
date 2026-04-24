@@ -1,17 +1,7 @@
-
-
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import {
-  User,
-  Mail,
-  LogOut,
-  Activity,
-  Shield,
-  Save,
-  X,
-} from "lucide-react";
+import { User, Mail, LogOut, Activity, Shield, Save, X } from "lucide-react";
 import axios from "axios";
 import "./Profile.css";
 import API_URL from "../../apiConfig";
@@ -69,10 +59,8 @@ const Profile = () => {
         formData,
         {
           withCredentials: true,
-        }
+        },
       );
-
-      console.log(response.data);
 
       if (response.data.success) {
         if (typeof setUser === "function") {
@@ -168,11 +156,7 @@ const Profile = () => {
           <div className="profile-actions">
             {isEditing ? (
               <>
-                <button
-                  type="submit"
-                  className="save-btn"
-                  disabled={loading}
-                >
+                <button type="submit" className="save-btn" disabled={loading}>
                   <Save size={18} />
                   {loading ? "Saving..." : "Save Changes"}
                 </button>
@@ -228,4 +212,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
