@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { User, Mail, LogOut, Activity, Shield, Save, X } from "lucide-react";
@@ -11,19 +11,15 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "" });
   const [loading, setLoading] = useState(false);
+
+  // Refs to hold input values directly (Bypasses state-render loop)
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const handleEditToggle = () => {
-    if (!isEditing) {
-      setFormData({ name: user?.name || "", email: user?.email || "" });
-    }
-    setIsEditing(!isEditing);
-  };
 
   const handleLogout = async () => {
     try {
@@ -37,10 +33,17 @@ const Profile = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Collect data from refs
+    const updatedData = {
+      name: nameRef.current.value,
+      email: emailRef.current.value,
+    };
+
     try {
       const response = await axios.patch(
         `${API_URL}/api/v1/profile/update`,
-        formData,
+        updatedData,
         { withCredentials: true },
       );
 
@@ -87,10 +90,8 @@ const Profile = () => {
                 <input
                   type="text"
                   className="edit-input"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
+                  ref={nameRef}
+                  defaultValue={user.name}
                   required
                   autoFocus
                 />
@@ -110,10 +111,8 @@ const Profile = () => {
                 <input
                   type="email"
                   className="edit-input"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
+                  ref={emailRef}
+                  defaultValue={user.email}
                   required
                 />
               ) : (
@@ -131,7 +130,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={handleEditToggle}
+                  onClick={() => setIsEditing(false)}
                 >
                   <X size={18} /> Cancel
                 </button>
@@ -141,7 +140,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="edit-btn"
-                  onClick={handleEditToggle}
+                  onClick={() => setIsEditing(true)}
                 >
                   Edit Profile
                 </button>
